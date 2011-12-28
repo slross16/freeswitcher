@@ -8,7 +8,7 @@ module FSR
       end
 
       def arguments
-        @cause
+        [@cause]
       end
     end
 
