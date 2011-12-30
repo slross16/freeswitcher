@@ -3,6 +3,7 @@ require "fsr/app"
 module FSR
   module App
     class Say < Application
+      # http://wiki.freeswitch.org/wiki/Misc._Dialplan_Tools_say
       attr_reader :message
 
       def initialize(message, opts = {})

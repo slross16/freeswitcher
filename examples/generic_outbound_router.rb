@@ -4,6 +4,24 @@ require File.expand_path('../../lib/fsr', __FILE__)
 require "fsr/listener/outbound"
 $stdout.flush
 
+# Example of a single Outbound Socket listener which dispatches the call
+# based on a freeswitch variable ("action", in this case).
+# With this you can use the following in a dialplan:
+#
+# <extension name="dtmf_demo">
+#   <condition field="destination_number" expression="^97701$">
+#     <action application="set" data="action=echo_dtmf" />
+#     <action application="socket" data="localhost:8184 sync full" />
+#   </condition>
+# </extension>
+#
+# Then dialing 97701 would send you to the 'echo_dtmf' method in this class.
+#
+# The power is being able to reuse that :8184 socket with this single listener
+# to handle many tasks, by setting the 'action' variable in the dialplan before
+# calling the socket application.  Have fun with this, feedback desired in #rubyists on
+# freenode about what it takes to overwhelm one listener.
+
 class OutboundRouter < FSR::Listener::Outbound
 
   def session_initiated
@@ -30,8 +48,8 @@ class OutboundRouter < FSR::Listener::Outbound
         # Tell the caller what they entered
         # If you have mod_flite installed you should hear speech
         fs_sleep(1000) {
-          speak("You Entered") {
-            say(read_var.to_s.strip) { hangup }
+          playback("ivr/8000/ivr-you_entered.wav") {
+            say(read_var.to_s.strip, say_method: 'iterated') { hangup }
           }
         }
       end
