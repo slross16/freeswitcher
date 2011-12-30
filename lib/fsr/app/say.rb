@@ -18,9 +18,6 @@ module FSR
         [@language, @data_type, @say_method, @gender, @message]
       end
 
-      def sendmsg
-        "call-command: execute\nexecute-app-name: %s\nexecute-app-arg: %s\nevent-lock:true\n\n" % [app_name, arguments.join(" ")]
-      end
     end
 
     register(:say, Say)
