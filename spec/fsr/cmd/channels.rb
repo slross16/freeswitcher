@@ -17,10 +17,14 @@ describe "Testing FSR::Cmd::Channels" do
     sofia.instance_variable_get("@filter").should.be.nil
   end
 
-  it "FSR::Cmd::Channels (regex as the filter) should store the proper filter" do
-    sofia = FSR::Cmd::Channels.new(nil, /something/)
-    sofia.raw.should == "show channels"
-    sofia.instance_variable_get("@filter").should == /something/
+  it "FSR::Cmd::Channels (string as the filter) should add the filter" do
+    sofia = FSR::Cmd::Channels.new(nil, 'something')
+    sofia.raw.should == 'show channels like "something"'
+  end
+
+  it "FSR::Cmd::Channels (number as the filter) should just limit the calls to that number" do
+    sofia = FSR::Cmd::Channels.new(nil, 3)
+    sofia.raw.should == "show channels 3"
   end
 
 end

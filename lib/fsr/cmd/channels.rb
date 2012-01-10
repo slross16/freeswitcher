@@ -29,18 +29,21 @@ module FSR
           channels = CSV.parse(call_info) 
           headers = channels[0]
           @channels = channels[1 .. -1].map { |c| FSR::Model::Channel.new(headers ,*c) }
-          if @filter
-            return @channels.select { |f| f.match @filter }
-          else
-            return @channels
-          end
         end
         []
       end
 
       # This method builds the API command to send to the freeswitch event socket
       def raw
-        "show channels"
+        if @filter.nil?
+          'show channels'
+        elsif @filter.is_a?(Fixnum)
+          'show channels %d' % @filter
+        elsif @filter.is_a?(String)
+          'show channels like "%s"' % @filter
+        else
+          'show channels'
+        end
       end
     end
 
