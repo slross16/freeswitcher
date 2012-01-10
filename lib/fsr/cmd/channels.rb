@@ -41,7 +41,7 @@ module FSR
         elsif @filter.is_a?(Fixnum)
           'show channels %d' % @filter
         elsif @filter.is_a?(String)
-          'show channels like "%s"' % @filter
+          "show channels like '%s'" % @filter
         else
           'show channels'
         end

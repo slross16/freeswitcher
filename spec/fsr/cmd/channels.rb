@@ -19,7 +19,7 @@ describe "Testing FSR::Cmd::Channels" do
 
   it "FSR::Cmd::Channels (string as the filter) should add the filter" do
     sofia = FSR::Cmd::Channels.new(nil, 'something')
-    sofia.raw.should == 'show channels like "something"'
+    sofia.raw.should == "show channels like 'something'"
   end
 
   it "FSR::Cmd::Channels (number as the filter) should just limit the calls to that number" do
