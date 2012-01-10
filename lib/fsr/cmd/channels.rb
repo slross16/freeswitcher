@@ -11,8 +11,9 @@ module FSR
         end
       end
 
-      def initialize(fs_socket = nil, distinct = true)
-        @distinct = distinct
+      def initialize(fs_socket = nil, filter = nil)
+        @filter = filter
+        @filter = nil if (@filter === true || @filter === false)
         @fs_socket = fs_socket # FSR::CommandSocket obj
       end
 
@@ -24,21 +25,22 @@ module FSR
         unless resp["body"] == "0 total."
           call_info, count = resp["body"].split("\n\n")
           require "fsr/model/channel"
-          begin
-            require "fastercsv"
-            @channels = FCSV.parse(call_info)
-          rescue LoadError
-            require "csv"
-            @channels = CSV.parse(call_info)
+          require "csv"
+          channels = CSV.parse(call_info) 
+          headers = channels[0]
+          @channels = channels[1 .. -1].map { |c| FSR::Model::Channel.new(headers ,*c) }
+          if @filter
+            return @channels.select { |f| f.match @filter }
+          else
+            return @channels
           end
-          return @channels[1 .. -1].map { |c| FSR::Model::Channel.new(@channels[0],*c) }
         end
         []
       end
 
       # This method builds the API command to send to the freeswitch event socket
       def raw
-        orig_command = @distinct ? "show distinct_channels" : "show channels"
+        "show channels"
       end
     end
 

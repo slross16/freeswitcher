@@ -23,13 +23,8 @@ module FSR
         unless resp["body"] == "0 total."
           call_info, count = resp["body"].split("\n\n")
           require "fsr/model/call"
-          begin
-            require "fastercsv"
-            @calls = FCSV.parse(call_info)
-          rescue LoadError
-            require "csv"
-            @calls = CSV.parse(call_info)
-          end
+          require "csv"
+          @calls = CSV.parse(call_info)
           return @calls[1 .. -1].map { |c| FSR::Model::Call.new(@calls[0],*c) }
         end
         []
