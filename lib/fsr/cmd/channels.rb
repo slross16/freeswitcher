@@ -29,6 +29,7 @@ module FSR
           channels = CSV.parse(call_info) 
           headers = channels[0]
           @channels = channels[1 .. -1].map { |c| FSR::Model::Channel.new(headers ,*c) }
+          return @channels
         end
         []
       end
