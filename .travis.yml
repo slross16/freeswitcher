@@ -6,10 +6,10 @@ rvm:
   - 1.9.2
   - 1.9.3
   - ruby-head
-  - rbx-19mode
 notifications:
   email:
     - mf@rubyists.com
+    - tj@rubyists.com
 branches:
   only:
     - master
