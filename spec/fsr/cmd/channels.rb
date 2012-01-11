@@ -13,8 +13,8 @@ describe "Testing FSR::Cmd::Channels" do
 
   it "FSR::Cmd::Channels (true as the filter) should send show channels" do
     sofia = FSR::Cmd::Channels.new(nil, true)
-    sofia.raw.should == "show channels"
-    sofia.instance_variable_get("@filter").should.be.nil
+    sofia.raw.should == "show distinct_channels"
+    sofia.instance_variable_get("@filter").should === true
   end
 
   it "FSR::Cmd::Channels (string as the filter) should add the filter" do

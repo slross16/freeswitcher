@@ -13,7 +13,7 @@ module FSR
 
       def initialize(fs_socket = nil, filter = nil)
         @filter = filter
-        @filter = nil if (@filter === true || @filter === false)
+        @filter = nil if @filter === false
         @fs_socket = fs_socket # FSR::CommandSocket obj
       end
 
@@ -22,21 +22,28 @@ module FSR
         orig_command = "%s %s" % [api_method, raw]
         Log.debug "saying #{orig_command}"
         resp = @fs_socket.say(orig_command)
-        unless resp["body"] == "0 total."
-          call_info, count = resp["body"].split("\n\n")
-          require "fsr/model/channel"
-          require "csv"
-          channels = CSV.parse(call_info) 
-          headers = channels[0]
-          @channels = channels[1 .. -1].map { |c| FSR::Model::Channel.new(headers ,*c) }
-          return @channels
+        if resp["body"] =~ /USAGE/
+          Log.warn "This server does not support #{raw}, trying Calls"
+          return Calls.new(@fs_socket, :detailed).run
+        else
+          unless resp["body"] == "0 total."
+            call_info, count = resp["body"].split("\n\n")
+            require "fsr/model/channel"
+            require "csv"
+            channels = CSV.parse(call_info) 
+            headers = channels[0]
+            @channels = channels[1 .. -1].map { |c| FSR::Model::Channel.new(headers ,*c) }
+            return @channels
+          end
+          []
         end
-        []
       end
 
       # This method builds the API command to send to the freeswitch event socket
       def raw
-        if @filter.nil?
+        if @filter === true
+          'show distinct_channels'
+        elsif @filter.nil?
           'show channels'
         elsif @filter.is_a?(Fixnum)
           'show channels %d' % @filter

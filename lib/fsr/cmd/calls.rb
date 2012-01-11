@@ -4,6 +4,7 @@ module FSR
     class Calls < Command
 
       include Enumerable
+      TYPES = [:detailed, :bridged, :detailed_bridged]
       def each(&block)
         @calls ||= run
         if @calls
@@ -11,7 +12,11 @@ module FSR
         end
       end
 
-      def initialize(fs_socket = nil)
+      def initialize(fs_socket = nil, type = nil)
+        @type = type
+        unless @type.nil?
+          raise ArgumentError, "Only #{TYPES} are allowed as arguments" unless TYPES.include?(@type)
+        end
         @fs_socket = fs_socket # FSR::CommandSocket obj
       end
 
@@ -32,7 +37,11 @@ module FSR
 
       # This method builds the API command to send to the freeswitch event socket
       def raw
-        orig_command = "show calls"
+        if @type.nil?
+          "show calls"
+        else
+          "show %s_calls" % @type
+        end
       end
     end
 
