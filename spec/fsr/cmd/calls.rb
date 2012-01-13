@@ -29,4 +29,9 @@ describe "Testing FSR::Cmd::Calls" do
     lambda { FSR::Cmd::Calls.new(nil, :food) }.should.raise ArgumentError
   end
 
+  it "FSR::Cmd::Calls sends a filter, when supplied" do
+    cmd = FSR::Cmd::Calls.new(nil, nil, "1234")
+    cmd.raw.should == "show calls like '1234'"
+  end
+
 end

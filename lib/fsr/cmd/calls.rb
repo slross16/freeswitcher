@@ -12,8 +12,9 @@ module FSR
         end
       end
 
-      def initialize(fs_socket = nil, type = nil)
+      def initialize(fs_socket = nil, type = nil, filter = nil)
         @type = type
+        @filter = filter
         unless @type.nil?
           raise ArgumentError, "Only #{TYPES} are allowed as arguments" unless TYPES.include?(@type)
         end
@@ -37,10 +38,15 @@ module FSR
 
       # This method builds the API command to send to the freeswitch event socket
       def raw
-        if @type.nil?
+        base = if @type.nil?
           "show calls"
         else
           "show %s_calls" % @type
+        end
+        if @filter
+          "%s like '%s'" % [base, @filter]
+        else
+          base
         end
       end
     end
