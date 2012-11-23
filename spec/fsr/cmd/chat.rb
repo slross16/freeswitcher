@@ -46,13 +46,13 @@ describe "Testing FSR::Cmd::Chat" do
   end
 
   it "Honours a more complex message" do
-    chat = FSR::Cmd::Chat.new(nil, :message => 'Hello, friendly sir. fƒø£0"f', :to => '1000@192.168.1.1', :from => '1001')
-    chat.raw.should == %Q(chat sip|1001|1000@192.168.1.1|Hello, friendly sir. fƒø£0"f)
+    chat = FSR::Cmd::Chat.new(nil, :message => 'Hello, friendly sir. "*/;{(\|/;,@#,/', :to => '1000@192.168.1.1', :from => '1001')
+    chat.raw.should == 'chat sip|1001|1000@192.168.1.1|Hello, friendly sir. "*/;{(\\\|/;,@#,/'
   end
 
   it "Escapes pipes from messages" do
     chat = FSR::Cmd::Chat.new(nil, :message => 'He||o there |ove|y', :to => '1000@192.168.1.1', :from => '1001')
-    chat.raw.should == "chat sip|1001|1000@192.168.1.1|He\|\|o there \|ove\|y"
+    chat.raw.should == %Q(chat sip|1001|1000@192.168.1.1|He\\|\\|o there \\|ove\\|y)
   end
 
 end
